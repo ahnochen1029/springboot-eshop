@@ -1,5 +1,6 @@
 package com.ahnochen.springbooteshop.controller;
 
+import com.ahnochen.springbooteshop.constant.ProductCategory;
 import com.ahnochen.springbooteshop.dto.ProductRequest;
 import com.ahnochen.springbooteshop.model.Product;
 import com.ahnochen.springbooteshop.service.ProductService;
@@ -17,8 +18,11 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping("/products")
-    public ResponseEntity<List<Product>> getProducts(){
-        List<Product> productList = productService.getProducts();
+    public ResponseEntity<List<Product>> getProducts(
+          @RequestParam(required = false) ProductCategory category,
+          @RequestParam(required = false) String search
+    ){
+        List<Product> productList = productService.getProducts(category,search);
         return ResponseEntity.status(HttpStatus.OK).body(productList);
     }
     @GetMapping("/products/{productId}")
