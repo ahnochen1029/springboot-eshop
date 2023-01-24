@@ -29,17 +29,11 @@ public class ProductDaoImpl implements ProductDao {
 
         Map<String, Object> map = new HashMap<>();
 
-        if (productQueryParams.getCategory() != null) {
-            sql += " AND category = :category";
-            map.put("category", productQueryParams.getCategory().name());
-        }
-        if (productQueryParams.getSearch() != null) {
-            sql += " AND product_name LIKE :search";
-            map.put("search", "%" + productQueryParams.getSearch() + "%");
-        }
+        //filtering
+        sql = addFilteringSql(sql, map, productQueryParams);
 
         // sory
-        sql += " ORDER BY " + productQueryParams.getOrderBy() + " " + productQueryParams.getSort();
+        sql = addSort(sql, productQueryParams);
 
         // pagination
         sql += " LIMIT :limit OFFSET :offset";
@@ -57,17 +51,11 @@ public class ProductDaoImpl implements ProductDao {
 
         Map<String, Object> map = new HashMap<>();
 
-        if (productQueryParams.getCategory() != null) {
-            sql += " AND category = :category";
-            map.put("category", productQueryParams.getCategory().name());
-        }
-        if (productQueryParams.getSearch() != null) {
-            sql += " AND product_name LIKE :search";
-            map.put("search", "%" + productQueryParams.getSearch() + "%");
-        }
+        //filtering
+        sql = addFilteringSql(sql, map, productQueryParams);
 
-        // sory
-        sql += " ORDER BY " + productQueryParams.getOrderBy() + " " + productQueryParams.getSort();
+        // sort
+        sql = addSort(sql, productQueryParams);
 
         Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
 
@@ -144,5 +132,23 @@ public class ProductDaoImpl implements ProductDao {
         map.put("productId", productId);
 
         namedParameterJdbcTemplate.update(sql, map);
+    }
+
+    private String addFilteringSql(String sql, Map<String, Object> map, ProductQueryParams productQueryParams) {
+        if (productQueryParams.getCategory() != null) {
+            sql += " AND category = :category";
+            map.put("category", productQueryParams.getCategory().name());
+        }
+        if (productQueryParams.getSearch() != null) {
+            sql += " AND product_name LIKE :search";
+            map.put("search", "%" + productQueryParams.getSearch() + "%");
+        }
+
+        return sql;
+    }
+
+    private String addSort(String sql, ProductQueryParams productQueryParams){
+        sql += " ORDER BY " + productQueryParams.getOrderBy() + " " + productQueryParams.getSort();
+        return sql;
     }
 }
