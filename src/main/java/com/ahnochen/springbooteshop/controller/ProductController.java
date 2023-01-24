@@ -1,6 +1,7 @@
 package com.ahnochen.springbooteshop.controller;
 
 import com.ahnochen.springbooteshop.constant.ProductCategory;
+import com.ahnochen.springbooteshop.dto.ProductQueryParams;
 import com.ahnochen.springbooteshop.dto.ProductRequest;
 import com.ahnochen.springbooteshop.model.Product;
 import com.ahnochen.springbooteshop.service.ProductService;
@@ -22,7 +23,11 @@ public class ProductController {
           @RequestParam(required = false) ProductCategory category,
           @RequestParam(required = false) String search
     ){
-        List<Product> productList = productService.getProducts(category,search);
+        ProductQueryParams productQueryParams = new ProductQueryParams();
+        productQueryParams.setCategory(category);
+        productQueryParams.setSearch(search);
+
+        List<Product> productList = productService.getProducts(productQueryParams);
         return ResponseEntity.status(HttpStatus.OK).body(productList);
     }
     @GetMapping("/products/{productId}")

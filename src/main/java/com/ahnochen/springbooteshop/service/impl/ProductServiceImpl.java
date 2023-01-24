@@ -2,6 +2,7 @@ package com.ahnochen.springbooteshop.service.impl;
 
 import com.ahnochen.springbooteshop.constant.ProductCategory;
 import com.ahnochen.springbooteshop.dao.ProductDao;
+import com.ahnochen.springbooteshop.dto.ProductQueryParams;
 import com.ahnochen.springbooteshop.dto.ProductRequest;
 import com.ahnochen.springbooteshop.model.Product;
 import com.ahnochen.springbooteshop.service.ProductService;
@@ -16,8 +17,8 @@ public class ProductServiceImpl implements ProductService {
     private ProductDao productDao;
 
     @Override
-    public List<Product> getProducts(ProductCategory category, String search) {
-        return productDao.getProducts(category, search);
+    public List<Product> getProducts(ProductQueryParams productQueryParams) {
+        return productDao.getProducts(productQueryParams);
     }
 
     @Override
