@@ -4,6 +4,7 @@ import com.ahnochen.springbooteshop.dao.OrderDao;
 import com.ahnochen.springbooteshop.dao.ProductDao;
 import com.ahnochen.springbooteshop.dto.BuyItem;
 import com.ahnochen.springbooteshop.dto.CreateOrderRequest;
+import com.ahnochen.springbooteshop.model.Order;
 import com.ahnochen.springbooteshop.model.OrderItem;
 import com.ahnochen.springbooteshop.model.Product;
 import com.ahnochen.springbooteshop.service.OrderService;
@@ -21,6 +22,17 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private ProductDao productDao;
+
+    @Override
+    public Order getOrderById(Integer orderId) {
+        Order order = orderDao.getOrderById(orderId);
+
+        List<OrderItem> orderItemList = orderDao.getOrderItemsByOrderId(orderId);
+
+        order.setOrderItemList(orderItemList);
+
+        return order;
+    }
 
     @Transactional
     @Override
