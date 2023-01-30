@@ -1,14 +1,20 @@
 package com.ahnochen.springbooteshop.controller;
 
 import com.ahnochen.springbooteshop.dto.CreateOrderRequest;
+import com.ahnochen.springbooteshop.dto.OrderQueryParams;
 import com.ahnochen.springbooteshop.model.Order;
 import com.ahnochen.springbooteshop.service.OrderService;
+import com.ahnochen.springbooteshop.util.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import java.util.List;
 
 @RestController
 public class OrderController {
@@ -24,5 +30,32 @@ public class OrderController {
 
         return ResponseEntity.status(HttpStatus.OK).body(order);
 
+    }
+
+    @GetMapping("/users/{userId}/orders")
+    public ResponseEntity<Page<Order>> getOrders(
+            @PathVariable Integer userId,
+            @RequestParam(defaultValue = "10") @Max(1000) @Min(0) Integer limit,
+            @RequestParam(defaultValue = "0") @Min(0) Integer offset
+    ){
+        OrderQueryParams orderQueryParams = new OrderQueryParams();
+        orderQueryParams.setUserId(userId);
+        orderQueryParams.setLimit(limit);
+        orderQueryParams.setOffset(offset);
+
+        // get order list
+        List<Order> orderList = orderService.getOrders(orderQueryParams);
+
+        // total order
+        Integer count = orderService.countOrder(orderQueryParams);
+
+        // pagination
+        Page<Order> page = new Page<>();
+        page.setLimit(limit);
+        page.setOffset(offset);
+        page.setTotal(count);
+        page.setResults(orderList);
+
+        return ResponseEntity.status(HttpStatus.OK).body(page);
     }
 }

@@ -5,6 +5,7 @@ import com.ahnochen.springbooteshop.dao.ProductDao;
 import com.ahnochen.springbooteshop.dao.UserDao;
 import com.ahnochen.springbooteshop.dto.BuyItem;
 import com.ahnochen.springbooteshop.dto.CreateOrderRequest;
+import com.ahnochen.springbooteshop.dto.OrderQueryParams;
 import com.ahnochen.springbooteshop.model.Order;
 import com.ahnochen.springbooteshop.model.OrderItem;
 import com.ahnochen.springbooteshop.model.Product;
@@ -18,8 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class OrderServiceImpl implements OrderService {
@@ -91,5 +91,21 @@ public class OrderServiceImpl implements OrderService {
         orderDao.createOrderItems(orderId, orderItemList);
 
         return orderId;
+    }
+
+    @Override
+    public List<Order> getOrders(OrderQueryParams orderQueryParams) {
+        List<Order> orderList = orderDao.getOrders(orderQueryParams);
+        for (Order order: orderList){
+            List<OrderItem> orderItemList = orderDao.getOrderItemsByOrderId(order.getOrderId());
+            order.setOrderItemList(orderItemList);
+        }
+
+        return  orderList;
+    }
+
+    @Override
+    public Integer countOrder(OrderQueryParams orderQueryParams) {
+        return orderDao.countOrder(orderQueryParams);
     }
 }

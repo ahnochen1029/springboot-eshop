@@ -2,6 +2,7 @@ package com.ahnochen.springbooteshop.dao.impl;
 
 
 import com.ahnochen.springbooteshop.dao.OrderDao;
+import com.ahnochen.springbooteshop.dto.OrderQueryParams;
 import com.ahnochen.springbooteshop.model.Order;
 import com.ahnochen.springbooteshop.model.OrderItem;
 import com.ahnochen.springbooteshop.rowmapper.OrderItemRowMapper;
@@ -90,5 +91,45 @@ public class OrderDaoImpl implements OrderDao{
 
         namedParameterJdbcTemplate.batchUpdate(sql,parameterSources);
 
+    }
+
+    @Override
+    public List<Order> getOrders(OrderQueryParams orderQueryParams) {
+        String sql = "SELECT order_id, user_id, total_amount, created_date, last_modified_date " +
+                "FROM `order` WHERE 1=1";
+        Map<String, Object> map = new HashMap<>();
+
+        sql = addFilteringSql(sql, map, orderQueryParams);
+
+        sql += " ORDER BY created_date DESC";
+
+        sql += " LIMIT :limit OFFSET :offset";
+
+        map.put("limit", orderQueryParams.getLimit());
+        map.put("offset", orderQueryParams.getOffset());
+
+        List<Order> orderList = namedParameterJdbcTemplate.query(sql, map, new OrderRowMapper());
+
+        return orderList;
+
+    }
+
+    @Override
+    public Integer countOrder(OrderQueryParams orderQueryParams) {
+        String sql = "SELECT COUNT(*) FROM `order` WHERE 1=1";
+        Map<String, Object> map = new HashMap<>();
+
+        sql = addFilteringSql(sql, map, orderQueryParams);
+
+        Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
+        return total;
+    }
+
+    private String addFilteringSql(String sql, Map<String, Object> map,OrderQueryParams orderQueryParams){
+        if(orderQueryParams.getUserId() != null){
+            sql += " AND user_id = :userId";
+            map.put("userId", orderQueryParams.getUserId());
+        }
+        return sql;
     }
 }

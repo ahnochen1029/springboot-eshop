@@ -1,5 +1,6 @@
 package com.ahnochen.springbooteshop.dao;
 
+import com.ahnochen.springbooteshop.dto.OrderQueryParams;
 import com.ahnochen.springbooteshop.model.Order;
 import com.ahnochen.springbooteshop.model.OrderItem;
 
@@ -14,5 +15,9 @@ public interface OrderDao {
     Integer createOrder(Integer userId, Integer totalAmount);
 
     void createOrderItems(Integer orderId, List<OrderItem> orderItemList);
+
+    List<Order> getOrders(OrderQueryParams orderQueryParams);
+
+    Integer countOrder(OrderQueryParams orderQueryParams);
 
 }
