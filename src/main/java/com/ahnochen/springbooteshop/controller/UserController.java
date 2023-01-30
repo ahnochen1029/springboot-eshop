@@ -1,5 +1,6 @@
 package com.ahnochen.springbooteshop.controller;
 
+import com.ahnochen.springbooteshop.dto.UserLoginRequest;
 import com.ahnochen.springbooteshop.dto.UserRegisterRequest;
 import com.ahnochen.springbooteshop.model.User;
 import com.ahnochen.springbooteshop.service.UserService;
@@ -25,6 +26,14 @@ public class UserController {
         User user = userService.getUserById(userId);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    }
+
+    @PostMapping("/users/login")
+    public ResponseEntity<User> login(@RequestBody @Valid UserLoginRequest userLoginRequest){
+        User user = userService.login(userLoginRequest);
+
+        return ResponseEntity.status(HttpStatus.OK).body(user);
+
     }
 
 }

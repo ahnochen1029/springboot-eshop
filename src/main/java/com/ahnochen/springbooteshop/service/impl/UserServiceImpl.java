@@ -1,6 +1,7 @@
 package com.ahnochen.springbooteshop.service.impl;
 
 import com.ahnochen.springbooteshop.dao.UserDao;
+import com.ahnochen.springbooteshop.dto.UserLoginRequest;
 import com.ahnochen.springbooteshop.dto.UserRegisterRequest;
 import com.ahnochen.springbooteshop.model.User;
 import com.ahnochen.springbooteshop.service.UserService;
@@ -21,7 +22,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Integer register(UserRegisterRequest userRegisterRequest) {
         // check duplicate
-        User user = userDao.getUserByEmail(userRegisterRequest);
+        User user = userDao.getUserByEmail(userRegisterRequest.getEmail());
 
         if (user != null) {
             log.warn("該 email {} 已經被註冊", userRegisterRequest.getEmail());
@@ -34,5 +35,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(Integer userId) {
         return userDao.getUserById(userId);
+    }
+
+    @Override
+    public User login(UserLoginRequest userLoginRequest) {
+        User user = userDao.getUserByEmail(userLoginRequest.getEmail());
+
+        if(user == null){
+            log.warn("該 email {} 尚未註冊", userLoginRequest.getEmail());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
+        if(user.getPassword().equals(userLoginRequest.getPassword())){
+            return user;
+        }else{
+            log.warn("email {} 密碼不正確", userLoginRequest.getEmail());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
 }
